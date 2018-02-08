@@ -16,7 +16,7 @@ exports.connect = (mode, done) => {
   const uri = (mode === exports.MODE_TEST) ? TEST_URI : PROD_URI
   MongoClient.connect(uri, (err, client) => {
     if (err) return done(err)
-    state.db = client.db('chaingear-test-db')
+    state.db = client.db((mode === exports.MODE_TEST) ? 'chaingear-test-db' : 'chaingear')
     state.mode = mode
     done()
   })
