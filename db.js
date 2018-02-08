@@ -14,14 +14,15 @@ exports.MODE_PROD = 'mode_prod'
 exports.connect = (mode, done) => {
   if (state.db) return done()
   const uri = (mode === exports.MODE_TEST) ? TEST_URI : PROD_URI
-  MongoClient.connect(uri, (err, db) => {
+  MongoClient.connect(uri, (err, client) => {
     if (err) return done(err)
-    state.db = db
+    state.db = client.db('chaingear-test-db')
     state.mode = mode
     done()
   })
 }
 exports.getDB = () => state.db
+
 exports.drop = done => {
   if (!state.db) return done()
   state.db.collections((err, collections) => {

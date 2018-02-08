@@ -1,5 +1,4 @@
 require('dotenv').config()
-// process.env.NODE_ENV = 'dev'
 
 const express = require('express')
 const MongoClient = require('mongodb').MongoClient
@@ -20,15 +19,9 @@ const state = {
 
 DB.connect(mode, (err) => {
   if (err) return logger.error(`Error while connecting to db: \n${err}`)
-  require('./app/routes/index.js')(app, database)
+  require('./app/routes/index.js')(app, DB.getDB())
   app.listen(port, () => {
     logger.info(`Listen ${port}`)
   })
 })
-/* MongoClient.connect(DB.url, (err, database) => {
-  if (err) return logger.error(`Error while connecting to db: \n${err}`)
-  require('./app/routes/index.js')(app, database)
-  app.listen(port, () => {
-    logger.info(`Listen ${port}`)
-  })
-}) */
+
