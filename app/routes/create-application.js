@@ -7,7 +7,15 @@ module.exports = (app, db) => {
         logger.error('An error occured while searching project in projectsInWork: \n', error)
         return res.json({result: 'error', message: 'internal_error'})
       }
-      if (searchRes !== null) return res.json({result: 'error', message: 'already_exsist'})
+      if (searchRes !== null) {
+        db.collection('projectsInWork').save({project_name: req.body.project_name}, req.body, (err, updated) => {
+          if (err) {
+            logger.error('An error occured while updating projectsInWork: \n', err)
+            return res.json({result: 'error', message: 'internal_error'})
+          }
+          return res.json({result: 'ok', message: 'application_updated'})
+        })
+      }
       db.collection('projectsInWork').save(req.body, (err, added) => {
         if (err) {
           logger.error('An error occured while adding in projectsInWork: \n', error)

@@ -12,10 +12,6 @@ app.use('/static', express.static('static'))
 
 const port = process.env.PORT || 8000
 const mode = process.env.NODE_ENV === 'dev' ? 'mode_prod' : 'mode_test'
-const state = {
-  db: null,
-  mode: null
-}
 
 DB.connect(mode, (err) => {
   if (err) return logger.error(`Error while connecting to db: \n${err}`)

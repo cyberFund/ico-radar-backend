@@ -18,11 +18,11 @@ describe('Applications CRUD cycle test', () => {
       blockchain: {}
     }
   }
-  /*before(done => {
+  before(done => {
     DB.connect(DB.MODE_TEST, done)
-  })*/
+  })
   beforeEach(done => {
-    DB.connect(DB.MODE_TEST, () => DB.drop(err => err ? done(err) : done()))
+    DB.drop(err => err ? done(err) : done())
   })
   it('it should create new application', done => {
     chai.request(`http://localhost:${port}`)
@@ -86,4 +86,73 @@ describe('Applications CRUD cycle test', () => {
           }) 
       })
   })
+  it('it should move project to the approvedProjects collection', done => {
+    chai.request(`http://localhost:${port}`)
+      .post('/create-application')
+      .send(project)
+      .end((err, res) => {
+        chai.request(`http://localhost:${port}`)
+          .post('/approve-application')
+          .send(project)
+          .end((err, res) => {
+            res.should.have.status(200)
+            res.body.should.be.a('object')
+            res.body.should.have.property('message').eql('application_approved')
+            done()
+          }) 
+      })
+  })
+  it('it should move project to the rejectedProjects collection', done => {
+    chai.request(`http://localhost:${port}`)
+      .post('/create-application')
+      .send(project)
+      .end((err, res) => {
+        chai.request(`http://localhost:${port}`)
+          .post('/reject-application')
+          .send(project)
+          .end((err, res) => {
+            res.should.have.status(200)
+            res.body.should.be.a('object')
+            res.body.should.have.property('message').eql('application_rejected')
+            done()
+          }) 
+      })
+  })
+  it('it should move project from the rejectedProjects to the approvedProjects collection', done => {
+    chai.request(`http://localhost:${port}`)
+      .post('/create-application')
+      .send(project)
+      .end((err, res) => {
+        chai.request(`http://localhost:${port}`)
+        .post('/reject-application')
+        .send(project)
+        .end((err, res) => {
+          chai.request(`http://localhost:${port}`)
+            .post('/move-rejected-approved')
+            .send(project)
+            .end((err, res) => {
+              res.should.have.status(200)
+              res.body.should.be.a('object')
+              res.body.should.have.property('message').eql('moved_approved')
+              done()
+            }) 
+          })
+      })
+  })
+  /*it('it should move project from the rejectedProjects to the approvedProjects collection', done => {
+    chai.request(`http://localhost:${port}`)
+      .post('/create-application')
+      .send(project)
+      .end((err, res) => {
+        chai.request(`http://localhost:${port}`)
+          .post('/move-rejected-approved')
+          .send(project)
+          .end((err, res) => {
+            res.should.have.status(200)
+            res.body.should.be.a('object')
+            res.body.should.have.property('message').eql('application_rejected')
+            done()
+          }) 
+      })
+  })*/
 })
