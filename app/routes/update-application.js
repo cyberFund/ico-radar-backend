@@ -14,6 +14,7 @@ module.exports = (app, db) => {
           return res.json({result: 'error', message: 'internal_error'})
         }
         // Doing some additional steps...
+        logger.info(`Application updated. Project: ${req.body.project_name}; time: ${new Date().toISOString()}`)
         res.json({result: 'ok', message: 'application_updated'})
       })
     })

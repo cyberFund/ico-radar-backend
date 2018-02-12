@@ -5,8 +5,8 @@ const state = {
   db: null,
   mode: null
 }
-const PROD_URI = process.env.DB_PROD_URI,
-  TEST_URI = process.env.DB_TEST_URI
+const PROD_URI = "mongodb://chaingear:rfhnf1a@ds113098.mlab.com:13098/chaingear", // process.env.DB_PROD_URI,
+  TEST_URI =  "mongodb://chaingear:rfhnf1a@ds113098.mlab.com:13098/chaingear" // process.env.DB_TEST_URI
 
 exports.MODE_TEST = 'mode_test'
 exports.MODE_PROD = 'mode_prod'

@@ -21,6 +21,7 @@ module.exports = (app, db) => {
               logger.error('An error occured while adding to approvedProjects: \n', err)
               return res.json({result: 'error', message: 'internal_error'})
             }
+            logger.info(`Application moved from rejected to approved. Project: ${req.body.project_name}; time: ${new Date().toISOString()}`)
             res.json({result: 'ok', message: 'moved_approved'})
           })
         }
