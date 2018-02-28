@@ -13,18 +13,22 @@ module.exports = (app, db) => {
             logger.error('An error occured while updating projectsInWork: \n', err)
             return res.json({result: 'error', message: 'internal_error'})
           }
-          return res.json({result: 'ok', message: 'application_updated'})
+          logger.info(`Application updated. Project: ${req.body.project_name}; time: ${new Date().toISOString()}`)
+          res.json({result: 'ok', message: 'application_updated'})
+          res.end()
+        })
+      } else {
+        db.collection('projectsInWork').save(req.body, (err, added) => {
+          if (err) {
+            logger.error('An error occured while adding in projectsInWork: \n', err)
+            return res.json({result: 'error', message: 'internal_error'})
+          }
+          // Doing some additional steps...
+          logger.info(`Added new application. Project: ${req.body.project_name}; time: ${new Date().toISOString()}`)
+          res.json({result: 'ok', message: 'application_created'})
+          res.end()
         })
       }
-      db.collection('projectsInWork').save(req.body, (err, added) => {
-        if (err) {
-          logger.error('An error occured while adding in projectsInWork: \n', err)
-          return res.json({result: 'error', message: 'internal_error'})
-        }
-        // Doing some additional steps...
-        logger.info(`Added new application. Project: ${req.body.project_name}; time: ${new Date().toISOString()}`)
-        res.json({result: 'ok', message: 'application_created'})
-      })
     })
   })
 }
