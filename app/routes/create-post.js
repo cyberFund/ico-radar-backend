@@ -1,7 +1,6 @@
 const config = require('../../config.json')
-const prms = require('../helpers/promisified.js')
 const Github = require('github-api-node')
-const PostGenerator = require('../helpers/post_generator.js')
+const PostGenerator = require('../helpers/post-generator.js')
 const logger = require('../helpers/logger.js')
 
 const owner = 'ninjascant', // 'ninjascant'
