@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>post-generator.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="../docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="github-api.html">
+                  helpers/github-api.js
+                </a>
+              
+                
+                <a class="source" href="logger.html">
+                  helpers/logger.js
+                </a>
+              
+                
+                <a class="source" href="new_to_old.html">
+                  helpers/new_to_old.js
+                </a>
+              
+                
+                <a class="source" href="plot_generator.html">
+                  helpers/plot_generator.js
+                </a>
+              
+                
+                <a class="source" href="post-generator.html">
+                  helpers/post-generator.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>post-generator.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">const</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fs'</span>)
+<span class="hljs-keyword">const</span> dateFormat = <span class="hljs-built_in">require</span>(<span class="hljs-string">'dateformat'</span>)
+<span class="hljs-keyword">const</span> plotGen = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./plot_generator.js'</span>)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Converts raw data structure into human-readable post with markdown</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">module</span>.exports = <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CreatePost</span> </span>{
+  <span class="hljs-keyword">constructor</span>(projectData) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Initialize properties that will be used to construct text</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.username = projectData.golos_username
+    <span class="hljs-keyword">this</span>.projectName = projectData.project_info.blockchain.project_name
+    <span class="hljs-keyword">this</span>.shortDescription = projectData.project_info.blockchain.short_description
+
+    <span class="hljs-keyword">if</span> (projectData.project_info.ico.common_info.token_distribution.shares.length &gt; <span class="hljs-number">1</span>) {
+      <span class="hljs-keyword">this</span>.tokenDistribution = projectData.project_info.ico.common_info.token_distribution.shares
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">this</span>.tokenDistribution = []
+    }
+    <span class="hljs-keyword">if</span> (projectData.project_info.ico.common_info.use_of_proceeds.length &gt; <span class="hljs-number">1</span>) {
+      <span class="hljs-keyword">this</span>.useOfProceeds = projectData.project_info.ico.common_info.use_of_proceeds
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">this</span>.useOfProceeds = []
+    }
+    
+    <span class="hljs-comment">/*
+</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Registration</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    this.regStart = projectData.project_info.ico.phases.registration.start_date
+    this.regEnd = projectData.project_info.ico.phases.registration.end_date
+    */</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Crowdsale terms
+this.icoStart = projectData.project_info.ico.phases.terms.dates.start_date
+this.icoEnd = projectData.project_info.ico.phases.terms.dates.end_date</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.icoTerms = projectData.project_info.ico.phases[<span class="hljs-number">0</span>].terms.sales_agreement
+    <span class="hljs-keyword">this</span>.icoUrl = projectData.project_info.ico.phases[<span class="hljs-number">0</span>].terms.sales_url
+    <span class="hljs-keyword">this</span>.totalSupply = projectData.project_info.ico.common_info.token_distribution.total_supply
+    <span class="hljs-keyword">this</span>.phases = projectData.project_info.ico.phases</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>this.issuedTokens = projectData.project_info.ico.phases.terms.issued_tokens
+this.capLimit = projectData.project_info.ico.phases.terms.cap_limit[0].amount + ‘ ‘ + ico.phases.terms.cap_limit[0].currency</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Token info</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.tokens = projectData.project_info.token
+    <span class="hljs-comment">/*this.tokenSymbol = form.token.symbol
+    this.inflationRate = form.token.inflation_rate
+    this.govRightsProj = form.token.governance_rights_project
+    this.govRightsOrg = form.token.governance_rights_project
+    switch (form.token.token_purpose.toLowerCase()) {
+      case 'ico token':
+        this.tokenPurpose = 'token will be used only for fundraising\n'
+        break
+      case 'app token':
+        this.tokenPurpose = 'token will be used only in app\n'
+        break
+      case 'both':
+        this.tokenPurpose = 'token will be used both for fundraising and app economics\n'
+        break
+      default:
+        this.tokenPurpose = 'unknown\n'
+        break*/</span>
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Creates directories for plots in ./files/ and calls helper plotGenerator function that creates donut charts for token and proceeds distribution </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    createPlots (token, proceeds) {
+      fs.mkdir(<span class="hljs-string">`./files/<span class="hljs-subst">${<span class="hljs-keyword">this</span>.projectName}</span>`</span>, (err) =&gt; {
+        <span class="hljs-keyword">if</span> (proceeds === <span class="hljs-literal">true</span>) {
+          plotGen(<span class="hljs-keyword">this</span>.useOfProceeds, 
+          <span class="hljs-string">`./files/<span class="hljs-subst">${<span class="hljs-keyword">this</span>.projectName.replace(<span class="hljs-regexp">/[\W]/g</span>, <span class="hljs-string">''</span>)}</span>/funds_distr.png`</span>, 
+          <span class="hljs-number">2</span>)
+        } 
+        <span class="hljs-keyword">if</span>(token === <span class="hljs-literal">true</span>) {
+          plotGen(<span class="hljs-keyword">this</span>.tokenDistribution, 
+          <span class="hljs-string">`./files/<span class="hljs-subst">${<span class="hljs-keyword">this</span>.projectName.replace(<span class="hljs-regexp">/[\W]/g</span>, <span class="hljs-string">''</span>)}</span>/token_distr.png`</span>, 
+          <span class="hljs-number">1</span>)
+        }
+      })
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>Creates part of post with a short description of a projects</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    createShortDescr () {
+      <span class="hljs-keyword">return</span> <span class="hljs-string">`Author: [<span class="hljs-subst">${<span class="hljs-keyword">this</span>.username}</span>](https://golos.io/@<span class="hljs-subst">${<span class="hljs-keyword">this</span>.username}</span>)\n## Short description \n<span class="hljs-subst">${<span class="hljs-keyword">this</span>.shortDescription}</span>\n`</span>
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>Creates part of post with a description of a planned token and funds distribution</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    createDistrDescr () {
+      <span class="hljs-keyword">let</span> fundsDistrStr, tokenDistrStr
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.useOfProceeds.length &gt; <span class="hljs-number">0</span> &amp;&amp; <span class="hljs-keyword">this</span>.tokenDistribution.length &lt;<span class="hljs-number">1</span>) {
+        fundsDistrStr = <span class="hljs-string">`\n\n### Use of proceeds:
+          ![](http://ninja-analytics.ru/static/<span class="hljs-subst">${<span class="hljs-keyword">this</span>.projectName.replace(<span class="hljs-regexp">/[\W]/g</span>, <span class="hljs-string">''</span>)}</span>/funds_distr.png)
+          \nDescription | Percent\n--|--`</span> + 
+          <span class="hljs-keyword">this</span>.useOfProceeds.reduce(<span class="hljs-function">(<span class="hljs-params">str, curr</span>) =&gt;</span> str += <span class="hljs-string">`\n<span class="hljs-subst">${curr.description}</span> | <span class="hljs-subst">${curr.percent}</span>`</span>, <span class="hljs-string">''</span>)
+        tokenDistrStr = <span class="hljs-string">''</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>this.createPlots(false, true)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      }
+      <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.useOfProceeds.length &lt; <span class="hljs-number">1</span> &amp;&amp; <span class="hljs-keyword">this</span>.tokenDistribution.length &gt; <span class="hljs-number">0</span>) {
+        tokenDistrStr = <span class="hljs-string">`\n\n### Token distribution
+        ![](http://ninja-analytics.ru/static/<span class="hljs-subst">${<span class="hljs-keyword">this</span>.projectName.replace(<span class="hljs-regexp">/[\W]/g</span>, <span class="hljs-string">''</span>)}</span>/token_distr.png)
+        \nDescription | Percent\n--|--`</span> +
+        <span class="hljs-keyword">this</span>.tokenDistribution.reduce(<span class="hljs-function">(<span class="hljs-params">str, curr</span>) =&gt;</span> {
+          str += <span class="hljs-string">`\n<span class="hljs-subst">${curr.description}</span> | <span class="hljs-subst">${curr.percent}</span>`</span>
+          <span class="hljs-keyword">return</span> str
+        }, <span class="hljs-string">''</span>)
+        fundsDistrStr = <span class="hljs-string">''</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>this.createPlots(true, false)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      }
+      <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.useOfProceeds.length &gt; <span class="hljs-number">0</span> &amp;&amp; <span class="hljs-keyword">this</span>.tokenDistribution.length &gt; <span class="hljs-number">0</span>) {
+        fundsDistrStr = <span class="hljs-string">`\n### Use of proceeds:
+          ![](http://ninja-analytics.ru/static/<span class="hljs-subst">${<span class="hljs-keyword">this</span>.projectName.replace(<span class="hljs-regexp">/[\W]/g</span>, <span class="hljs-string">''</span>)}</span>/funds_distr.png)
+          \nDescription | Percent\n--|--\n`</span> + <span class="hljs-keyword">this</span>.useOfProceeds.reduce(<span class="hljs-function">(<span class="hljs-params">str, curr</span>) =&gt;</span> str += <span class="hljs-string">`<span class="hljs-subst">${curr.description}</span> | <span class="hljs-subst">${curr.percent}</span>\n`</span>, <span class="hljs-string">''</span>)
+        tokenDistrStr = <span class="hljs-string">`\n### Token distribution
+        ![](http://ninja-analytics.ru/static/<span class="hljs-subst">${<span class="hljs-keyword">this</span>.projectName.replace(<span class="hljs-regexp">/[\W]/g</span>, <span class="hljs-string">''</span>)}</span>/token_distr.png)
+        \nDescription | Percent\n--|--\n`</span> +
+        <span class="hljs-keyword">this</span>.tokenDistribution.reduce(<span class="hljs-function">(<span class="hljs-params">str, curr</span>) =&gt;</span> {
+          str += <span class="hljs-string">`<span class="hljs-subst">${curr.description}</span> | <span class="hljs-subst">${curr.percent}</span>\n`</span>
+          <span class="hljs-keyword">return</span> str
+        }, <span class="hljs-string">''</span>)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>this.createPlots(true, true)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      }
+      <span class="hljs-keyword">else</span> {
+        fundsDistrStr = <span class="hljs-string">''</span>
+        tokenDistrStr = <span class="hljs-string">''</span>
+      }
+      <span class="hljs-keyword">return</span> fundsDistrStr + <span class="hljs-string">' '</span> + tokenDistrStr
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>Creates part of post with a description of a crowdsale</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    createIcoCommonDescr () {
+      <span class="hljs-keyword">return</span> <span class="hljs-string">`## Crowdsale \n**Crowdsale agreement**: <span class="hljs-subst">${<span class="hljs-keyword">this</span>.icoTerms}</span> 
+\n\n**Crowdase website**: <span class="hljs-subst">${<span class="hljs-keyword">this</span>.icoUrl}</span> \n\n**Total token supply**: <span class="hljs-subst">${<span class="hljs-keyword">this</span>.totalSupply}</span> <span class="hljs-subst">${<span class="hljs-keyword">this</span>.createDistrDescr()}</span>`</span>
+    }
+    createIcoPhasesDescr () {
+      <span class="hljs-keyword">const</span> phasesDescr = <span class="hljs-keyword">this</span>.phases.map(<span class="hljs-function"><span class="hljs-params">phase</span> =&gt;</span> {
+        <span class="hljs-built_in">console</span>.log(phase.dates.start_date)
+        <span class="hljs-keyword">const</span> issuedStr = phase.terms.issued_tokens === <span class="hljs-string">''</span> ? <span class="hljs-string">''</span> : 
+          <span class="hljs-string">`\n\n**Amount of tokens issued in this phase**: <span class="hljs-subst">${phase.terms.issued_tokens}</span>`</span>
+        <span class="hljs-keyword">const</span> capLimitStr = phase.terms.cap_limit[<span class="hljs-number">0</span>].currency === <span class="hljs-string">''</span> ? <span class="hljs-string">''</span> :
+          <span class="hljs-string">`\n\n**Cap limit**: <span class="hljs-subst">${phase.terms.cap_limit[<span class="hljs-number">0</span>].amount}</span> <span class="hljs-subst">${phase.terms.cap_limit[<span class="hljs-number">0</span>].currency}</span>`</span>
+
+        <span class="hljs-keyword">return</span> <span class="hljs-string">`\n### <span class="hljs-subst">${phase.phase_name}</span> \n**Current status**: 
+<span class="hljs-subst">${phase.phase_status}</span>\n\n**Start date**: <span class="hljs-subst">${dateFormat(phase.dates.start_date, <span class="hljs-string">'fullDate'</span>)}</span>
+\n\n**End date**: <span class="hljs-subst">${dateFormat(phase.dates.end_date, <span class="hljs-string">'fullDate'</span>)}</span><span class="hljs-subst">${issuedStr}</span><span class="hljs-subst">${capLimitStr}</span>`</span>
+      })
+      <span class="hljs-keyword">return</span> <span class="hljs-string">`\n## Crowdsale phases \n`</span> + phasesDescr.join(<span class="hljs-string">'\n'</span>)
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>Creates part of post with a short description of token characteristics</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    createTokenDescr () {
+      <span class="hljs-keyword">const</span> tokensStr = <span class="hljs-keyword">this</span>.tokens.map(<span class="hljs-function"><span class="hljs-params">token</span> =&gt;</span> {
+        <span class="hljs-keyword">let</span> purposeStr = <span class="hljs-string">''</span>
+        <span class="hljs-keyword">switch</span> (token.token_purpose.toLowerCase()) {
+          <span class="hljs-keyword">case</span> <span class="hljs-string">'raising funds'</span>:
+            purposeStr = <span class="hljs-string">'token will be used only for fundraising'</span>
+            <span class="hljs-keyword">break</span>
+          <span class="hljs-keyword">case</span> <span class="hljs-string">'utility'</span>:
+            purposeStr = <span class="hljs-string">'token will be used only in app'</span>
+            <span class="hljs-keyword">break</span>
+          <span class="hljs-keyword">case</span> <span class="hljs-string">'both'</span>:
+            purposeStr = <span class="hljs-string">'token will be used both for fundraising and app economics'</span>
+            <span class="hljs-keyword">break</span>
+          <span class="hljs-keyword">default</span>:
+            purposeStr = <span class="hljs-string">'unknown'</span>
+            <span class="hljs-keyword">break</span>
+        }
+        <span class="hljs-keyword">let</span> type = <span class="hljs-string">''</span>
+        <span class="hljs-keyword">switch</span> (token.token_type.toLowerCase()) {
+          <span class="hljs-keyword">case</span> <span class="hljs-string">'core token'</span>:
+            type = <span class="hljs-string">'Core token - token uses its own blockchain'</span>
+            <span class="hljs-keyword">break</span>
+          <span class="hljs-keyword">case</span> <span class="hljs-string">'blockchain issued token'</span>:
+            type = <span class="hljs-string">'Blockchain issued token - token uses an existing blockchain'</span>
+            <span class="hljs-keyword">break</span>
+        }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>Conditions for optional fields</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">const</span> inflationStr = token.inflation_rate === <span class="hljs-string">''</span> ? <span class="hljs-string">''</span> : <span class="hljs-string">`**Inflation/deflation rate**: <span class="hljs-subst">${token.inflation_rate}</span>`</span>
+        <span class="hljs-keyword">const</span> circStr = token.circulation_terms === <span class="hljs-string">''</span> ? <span class="hljs-string">''</span> : <span class="hljs-string">`\n\n**Circulation terms**: <span class="hljs-subst">${token.circulation_terms}</span>`</span>
+        <span class="hljs-keyword">const</span> govOrgStr = token.governance_rights_org === <span class="hljs-string">''</span> 
+          ? <span class="hljs-string">''</span> : <span class="hljs-string">`\n\n**Rights to govern the operational organization**: <span class="hljs-subst">${token.governance_rights_org}</span>`</span>
+        <span class="hljs-keyword">const</span> govProjStr = token.governance_rights_project === <span class="hljs-string">''</span> 
+          ? <span class="hljs-string">''</span> : <span class="hljs-string">`\n\n**Rights to vote for the course of the project development**:  <span class="hljs-subst">${token.governance_rights_project}</span>`</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>Full string </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">return</span> <span class="hljs-string">`\n### <span class="hljs-subst">${token.name}</span>\n\n**Token symbol**: <span class="hljs-subst">${token.symbol}</span>\n\n**Token purpose**: <span class="hljs-subst">${purposeStr}</span>\n\n**Token type**: <span class="hljs-subst">${type}</span>\n\n<span class="hljs-subst">${inflationStr}</span><span class="hljs-subst">${circStr}</span><span class="hljs-subst">${govOrgStr}</span><span class="hljs-subst">${govProjStr}</span>`</span>
+      })
+      <span class="hljs-keyword">return</span> <span class="hljs-string">`\n## Tokens \n<span class="hljs-subst">${tokensStr.join(<span class="hljs-string">'\n'</span>)}</span>`</span> <span class="hljs-comment">// ##Token</span>
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>Creates whole post</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    createPost () {
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.createShortDescr() + <span class="hljs-keyword">this</span>.createIcoCommonDescr() + <span class="hljs-keyword">this</span>.createIcoPhasesDescr() + <span class="hljs-keyword">this</span>.createTokenDescr()
+    }
+}
+
+<span class="hljs-comment">/*
+const createPost = (data) =&gt; {
+  
+  const supplyStr = (form.token.total_supply !== undefined)?
+    `\nTotal supply: ${form.token.total_supply}\n`:''
+ 
+
+</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p>String forICO description</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">const</span> regDatesStr = (form.ico.reg_start_date_date!==<span class="hljs-literal">undefined</span> &amp;&amp; form.ico.reg_end_date_date!==<span class="hljs-literal">undefined</span>)?
+    <span class="hljs-string">`\nRegistration period: <span class="hljs-subst">${dateFormat(form.ico.reg_start_date_date, <span class="hljs-string">'fullDate'</span>)}</span> - <span class="hljs-subst">${dateFormat(form.ico.reg_end_date_date, <span class="hljs-string">'fullDate'</span>)}</span>\n`</span>:<span class="hljs-string">''</span>
+  <span class="hljs-keyword">const</span> regSiteStr = (form.ico.reg_url!==<span class="hljs-literal">undefined</span>)?
+    <span class="hljs-string">`\nRegistration page: <span class="hljs-subst">${form.ico.reg_url}</span>\n`</span>:<span class="hljs-string">''</span>
+  <span class="hljs-keyword">const</span> issuedStr = (form.ico.issued_tokens!==<span class="hljs-literal">undefined</span>)?
+    <span class="hljs-string">`\n\nAmount of tokens issued to sale: <span class="hljs-subst">${form.ico.issued_tokens}</span> <span class="hljs-subst">${form.token.symbol}</span>\n`</span>:<span class="hljs-string">''</span>
+  <span class="hljs-keyword">const</span> tokenDistrDate = (form.ico.token_distr_date!==<span class="hljs-literal">undefined</span>)?
+    <span class="hljs-string">`\nToken distribution date: <span class="hljs-subst">${dateFormat(form.ico.token_distr_date, <span class="hljs-string">'fullDate'</span>)}</span>\n`</span>:<span class="hljs-string">''</span>
+  <span class="hljs-keyword">const</span> capStr = (form.ico.cap_limit_amount!==<span class="hljs-literal">undefined</span>)?
+    <span class="hljs-string">`\Cap limit: <span class="hljs-subst">${form.ico.cap_limit_amount}</span> <span class="hljs-subst">${form.ico.cap_limit_currency}</span>\n`</span>:<span class="hljs-string">''</span>
+  
+  <span class="hljs-keyword">const</span> icoStr = <span class="hljs-string">`\n## ICO<span class="hljs-subst">${regDatesStr}</span><span class="hljs-subst">${regSiteStr}</span>
+  ICO start and end dates: <span class="hljs-subst">${dateFormat(form.ico.ico_start_date_date, <span class="hljs-string">'fullDate'</span>)}</span> - <span class="hljs-subst">${dateFormat(form.ico.ico_end_date_date, <span class="hljs-string">'fullDate'</span>)}</span>
+
+  Crowdsale page: <span class="hljs-subst">${form.ico.sales_url}</span><span class="hljs-subst">${issuedStr}</span><span class="hljs-subst">${tokenDistrDate}</span><span class="hljs-subst">${capStr}</span>
+
+  Crowdsale terms: <span class="hljs-subst">${form.ico.sales_agreement}</span>
+
+
+  `</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p>Links string</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">const</span> linksList = form.links.reduce(<span class="hljs-function">(<span class="hljs-params">str, curr</span>) =&gt;</span> str += <span class="hljs-string">`\n* [<span class="hljs-subst">${curr.name}</span>](<span class="hljs-subst">${curr.url}</span>)`</span>, <span class="hljs-string">''</span>)
+  <span class="hljs-keyword">const</span> linksStr = <span class="hljs-string">`\n## Useful links\n<span class="hljs-subst">${linksList}</span>`</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p>Full post string</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  const fullPost = `${descrStr}${tokenStr}${icoStr}${linksStr}\n\n`
+  return fullPost
+}
+module.exports = createPost*/</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
