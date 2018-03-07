@@ -17,7 +17,7 @@ module.exports = (app, db) => {
             logger.error('An error occured while updating in projectsInWork: \n', err)
             return res.status(500)
           }
-          // Doing some additional steps...
+          /* Doing some additional steps... */
           else {
         	  logger.info(`Application updated. Project: ${req.body.project_name}; time: ${new Date().toISOString()}`)
               res.json({result: 'ok', message: 'application_updated'})

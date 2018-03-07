@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>reject-application.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="../docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="approve-application.html">
+                  routes/approve-application.js
+                </a>
+              
+                
+                <a class="source" href="create-application.html">
+                  routes/create-application.js
+                </a>
+              
+                
+                <a class="source" href="create-post.html">
+                  routes/create-post.js
+                </a>
+              
+                
+                <a class="source" href="get-all-applications.html">
+                  routes/get-all-applications.js
+                </a>
+              
+                
+                <a class="source" href="get-application.html">
+                  routes/get-application.js
+                </a>
+              
+                
+                <a class="source" href="index.html">
+                  routes/index.js
+                </a>
+              
+                
+                <a class="source" href="move-rejected-approved.html">
+                  routes/move-rejected-approved.js
+                </a>
+              
+                
+                <a class="source" href="reject-application.html">
+                  routes/reject-application.js
+                </a>
+              
+                
+                <a class="source" href="update-application.html">
+                  routes/update-application.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>reject-application.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">const</span> logger = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../helpers/logger'</span>)
+
+<span class="hljs-built_in">module</span>.exports = <span class="hljs-function">(<span class="hljs-params">app, db</span>) =&gt;</span> {
+  app.post(<span class="hljs-string">'/reject-application'</span>, (req, res) =&gt; {
+    db.collection(<span class="hljs-string">'projectsInWork'</span>).deleteOne({<span class="hljs-string">'project_name'</span>: req.body.project_name}, (err, searchRes) =&gt; {
+      <span class="hljs-keyword">if</span> (err) {
+        logger.error(<span class="hljs-string">'An error occured while searching project in projectsInWork: \n'</span>, err)
+        <span class="hljs-keyword">return</span> res.json({<span class="hljs-attr">result</span>: <span class="hljs-string">'error'</span>, <span class="hljs-attr">message</span>: <span class="hljs-string">'internal_error'</span>})
+      }
+      db.collection(<span class="hljs-string">'rejectedProjects'</span>).findOne({<span class="hljs-attr">project_name</span>: req.body.project_name}, (err, searchingRes) =&gt; {
+        <span class="hljs-keyword">if</span> (err) {
+          logger.error(<span class="hljs-string">'An error occured while searching project in rejectedProjects: \n'</span>, err)
+          <span class="hljs-keyword">return</span> res.json({<span class="hljs-attr">result</span>: <span class="hljs-string">'error'</span>, <span class="hljs-attr">message</span>: <span class="hljs-string">'internal_error'</span>})
+        }
+        db.collection(<span class="hljs-string">'rejectedProjects'</span>).save(req.body, (err, added) =&gt; {
+          <span class="hljs-keyword">if</span> (err) {
+            logger.error(<span class="hljs-string">'An error occured while adding in rejectedProjects: \n'</span>, err)
+            <span class="hljs-keyword">return</span> res.json({<span class="hljs-attr">result</span>: <span class="hljs-string">'error'</span>, <span class="hljs-attr">message</span>: <span class="hljs-string">'internal_error'</span>})
+          }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Doing some additional steps…</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          logger.info(<span class="hljs-string">`Application rejected. Project: <span class="hljs-subst">${req.body.project_name}</span>; time: <span class="hljs-subst">${<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>().toISOString()}</span>`</span>)
+          res.json({<span class="hljs-attr">result</span>: <span class="hljs-string">'ok'</span>, <span class="hljs-attr">message</span>: <span class="hljs-string">'application_rejected'</span>})
+        })
+      })
+    })
+  })
+}</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

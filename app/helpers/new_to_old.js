@@ -33,6 +33,7 @@ module.exports = (new_file) => {
     },
     links: new_file.blockchain.links
   }
+  // Some tricks to handle properties that assigned to arrays
   old_json.dependencies.push(new_file.blockchain.dependency)
   if(new_file.ico.phases[0].terms.cap_limit.amount>0) {
     old_json.crowdsales.cap_limit.push(`${new_file.ico.phases[0].terms.cap_limit.currency}=${new_file.ico.phases[0].terms.cap_limit.amount}`)
