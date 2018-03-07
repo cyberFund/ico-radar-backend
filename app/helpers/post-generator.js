@@ -2,8 +2,10 @@ const fs = require('fs')
 const dateFormat = require('dateformat')
 const plotGen = require('./plot_generator.js')
 
+// Converts raw data structure into human-readable post with markdown
 module.exports = class CreatePost {
   constructor(projectData) {
+    // Initialize properties that will be used to construct text
     this.username = projectData.golos_username
     this.projectName = projectData.project_info.blockchain.project_name
     this.shortDescription = projectData.project_info.blockchain.short_description
@@ -54,6 +56,7 @@ module.exports = class CreatePost {
         this.tokenPurpose = 'unknown\n'
         break*/
     }
+    // Creates directories for plots in ./files/ and calls helper plotGenerator function that creates donut charts for token and proceeds distribution 
     createPlots (token, proceeds) {
       fs.mkdir(`./files/${this.projectName}`, (err) => {
         if (proceeds === true) {
@@ -68,9 +71,11 @@ module.exports = class CreatePost {
         }
       })
     }
+    // Creates part of post with a short description of a projects
     createShortDescr () {
       return `Author: [${this.username}](https://golos.io/@${this.username})\n## Short description \n${this.shortDescription}\n`
     }
+    // Creates part of post with a description of a planned token and funds distribution
     createDistrDescr () {
       let fundsDistrStr, tokenDistrStr
       if (this.useOfProceeds.length > 0 && this.tokenDistribution.length <1) {
@@ -111,6 +116,7 @@ module.exports = class CreatePost {
       }
       return fundsDistrStr + ' ' + tokenDistrStr
     }
+    // Creates part of post with a description of a crowdsale
     createIcoCommonDescr () {
       return `## Crowdsale \n**Crowdsale agreement**: ${this.icoTerms} 
 \n\n**Crowdase website**: ${this.icoUrl} \n\n**Total token supply**: ${this.totalSupply} ${this.createDistrDescr()}`
@@ -129,6 +135,7 @@ ${phase.phase_status}\n\n**Start date**: ${dateFormat(phase.dates.start_date, 'f
       })
       return `\n## Crowdsale phases \n` + phasesDescr.join('\n')
     }
+    // Creates part of post with a short description of token characteristics
     createTokenDescr () {
       const tokensStr = this.tokens.map(token => {
         let purposeStr = ''
@@ -169,6 +176,7 @@ ${phase.phase_status}\n\n**Start date**: ${dateFormat(phase.dates.start_date, 'f
       })
       return `\n## Tokens \n${tokensStr.join('\n')}` // ##Token
     }
+    // Creates whole post
     createPost () {
       return this.createShortDescr() + this.createIcoCommonDescr() + this.createIcoPhasesDescr() + this.createTokenDescr()
     }

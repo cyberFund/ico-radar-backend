@@ -1,3 +1,4 @@
+// This function converts toml file with current version of data structure into json object with old version
 module.exports = (new_file) => {
   let old_json = {
     genesis_id: '',

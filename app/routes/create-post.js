@@ -6,6 +6,7 @@ const logger = require('../helpers/logger.js')
 const owner = 'ninjascant', // 'ninjascant'
   path = '/posts/',
   br = 'master'
+  
 const github = new Github({
   username: owner,
   password: config.git_key_main,
