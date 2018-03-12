@@ -12,8 +12,8 @@ module.exports = (app, db) => {
       }
       if (searchRes === null) {
         // Send a message and 404 response
-        res.send('Application with such project_name does not exist')
         res.status(404)
+        res.json({message: 'Application with specified project_name does not exist'})
         return res.end()
       }
       // If search ends successfully it sends json object with search results and set 200 status to response

@@ -10,7 +10,7 @@ module.exports = (app, db) => {
         return res.status(500)
       }
       // Filters all unvalid documents
-      const validDocs = searchRes.filter((document) => document.project_name !== undefined)
+      const validDocs = searchRes.filter(doc => doc.project_info !== undefined)
       res.json({result: 'ok', message: 'successfully_finded', applications: validDocs})
       res.status(200)
       res.end()

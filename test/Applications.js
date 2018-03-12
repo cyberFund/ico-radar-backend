@@ -1,5 +1,3 @@
-process.env.NODE_ENV = 'test'
-
 const chai = require('chai')
 const should = chai.should()
 const chaiHttp = require('chai-http')
@@ -18,6 +16,9 @@ describe('Applications CRUD cycle test', () => {
       blockchain: {}
     }
   }
+  const emptyProject = {
+    project_name: 'Polkadot'
+  }
   before(done => {
     DB.connect(DB.MODE_TEST, done)
   })
@@ -35,24 +36,18 @@ describe('Applications CRUD cycle test', () => {
         done()
       })
   })
-  it('it should update an existing application', done => {
-    const updatedProject = {
-      creator_email: 'other_address@gmail.com',
-      project_name: 'Polkadot',
-      timestamp: new Date(),
-      project_info: {}
-    }
+  it('it should return error message after trying to create new application', done => {
     chai.request(`http://localhost:${port}`)
       .post('/create-application')
       .send(project)
       .end((err, res) => {
         chai.request(`http://localhost:${port}`)
-          .post('/update-application')
-          .send(updatedProject)
+          .post('/create-application')
+          .send(project)
           .end((err, res) => {
-            res.should.have.status(200)
+            res.should.have.status(400)
             res.body.should.be.a('object')
-            res.body.should.have.property('message').eql('application_updated')
+            res.body.should.have.property('message').eql('Application with this project_name already exists')
             done()
           })
       })
@@ -67,14 +62,28 @@ describe('Applications CRUD cycle test', () => {
         done()
       })
   })
+  it('it should return only applications with specified project_info', done => {
+    chai.request(`http://localhost:${port}`)
+      .post('/create-application')
+      .send(emptyProject)
+      .end((err, res) => {
+        chai.request(`http://localhost:${port}`)
+          .get('/get-all-applications')
+          .end((err, res) => {
+            res.should.have.status(200)
+            res.body.applications.should.be.a('array')
+            res.body.applications.length.should.be.eql(0)
+            done()
+          })
+        })
+  })
   it('it should get an application with specified project_name', done => {
     chai.request(`http://localhost:${port}`)
       .post('/create-application')
       .send(project)
       .end((err, res) => {
         chai.request(`http://localhost:${port}`)
-          .get('/get-application')
-          .send({project_name: 'Polkadot'})
+          .get('/get-application/Polkadot')
           .end((err, res) => {
             res.should.have.status(200)
             res.body.should.be.a('object')
@@ -86,73 +95,19 @@ describe('Applications CRUD cycle test', () => {
           }) 
       })
   })
-  it('it should move project to the approvedProjects collection', done => {
+  it('it should return an error after trying to get application that doesnt exist', done => {
     chai.request(`http://localhost:${port}`)
       .post('/create-application')
       .send(project)
       .end((err, res) => {
         chai.request(`http://localhost:${port}`)
-          .post('/approve-application')
-          .send(project)
+          .get('/get-application/Polkadot1')
           .end((err, res) => {
-            res.should.have.status(200)
+            res.should.have.status(404)
             res.body.should.be.a('object')
-            res.body.should.have.property('message').eql('application_approved')
+            res.body.should.have.property('message').eql('Application with specified project_name does not exist')
             done()
           }) 
       })
   })
-  it('it should move project to the rejectedProjects collection', done => {
-    chai.request(`http://localhost:${port}`)
-      .post('/create-application')
-      .send(project)
-      .end((err, res) => {
-        chai.request(`http://localhost:${port}`)
-          .post('/reject-application')
-          .send(project)
-          .end((err, res) => {
-            res.should.have.status(200)
-            res.body.should.be.a('object')
-            res.body.should.have.property('message').eql('application_rejected')
-            done()
-          }) 
-      })
-  })
-  it('it should move project from the rejectedProjects to the approvedProjects collection', done => {
-    chai.request(`http://localhost:${port}`)
-      .post('/create-application')
-      .send(project)
-      .end((err, res) => {
-        chai.request(`http://localhost:${port}`)
-        .post('/reject-application')
-        .send(project)
-        .end((err, res) => {
-          chai.request(`http://localhost:${port}`)
-            .post('/move-rejected-approved')
-            .send(project)
-            .end((err, res) => {
-              res.should.have.status(200)
-              res.body.should.be.a('object')
-              res.body.should.have.property('message').eql('moved_approved')
-              done()
-            }) 
-          })
-      })
-  })
-  /*it('it should move project from the rejectedProjects to the approvedProjects collection', done => {
-    chai.request(`http://localhost:${port}`)
-      .post('/create-application')
-      .send(project)
-      .end((err, res) => {
-        chai.request(`http://localhost:${port}`)
-          .post('/move-rejected-approved')
-          .send(project)
-          .end((err, res) => {
-            res.should.have.status(200)
-            res.body.should.be.a('object')
-            res.body.should.have.property('message').eql('application_rejected')
-            done()
-          }) 
-      })
-  })*/
 })

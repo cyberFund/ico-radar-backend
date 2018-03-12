@@ -8,12 +8,13 @@ module.exports = (app, db) => {
     db.collection('projectsInWork').findOne({'project_name': req.body.project_name}, (err, searchRes) => {
       if (err) {
         logger.error('An error occured while searching project in projectsInWork: \n', err)
-        return res.error('internal_error')
+        return res.status(500)
       }
       // If there is such document, sends an error responce
       if (searchRes !== null) {
-        res.send('Application with this project_name already exists')
         res.status(400)
+        res.json({message: 'Application with this project_name already exists'})
+        res.end()
       } else {
         // Otherwise, saves document in projectsInWork collection and sends ok responce to client
         db.collection('projectsInWork').save(req.body, (err, added) => {
@@ -23,7 +24,7 @@ module.exports = (app, db) => {
           }
           // If operation ends successfuly, sends 200 response
           logger.info(`Added new application. Project: ${req.body.project_name}; time: ${new Date().toISOString()}`)
-          res.send('application_created')
+          res.json({message: 'application_created'})
           res.status(200)
           res.end()
         })
