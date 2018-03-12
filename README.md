@@ -29,3 +29,5 @@ chaingear-backend is written with Express.js and have following structure:
   * `plot_generator` - exports a function that recives an array with objects which have 2 keys: `description` and `percent` and creates a donut plot based on this array
 
   * `post-generator`  - exports a class that contains methods for generating human-readable post from raw object with project description
+
+You can also view [architecture scheme](https://github.com/cyberFund/chaingear-backend/blob/master/docs/arch_scheme.png) in docs/ directory
