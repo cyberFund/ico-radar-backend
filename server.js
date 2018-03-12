@@ -28,7 +28,7 @@ const mode = process.env.NODE_ENV === 'dev' ? 'mode_prod' : 'mode_test'
 DB.connect(mode, (err) => {
   if (err) return logger.error(`Error while connecting to db: \n${err}`)
   // Initializes all routes and pass an Express instance and db object to this routes
-  require('./app/routes/index.js')(app, DB.getDB(), passport)
+  require('./app/routes/index.js')(app, DB.getDB())
   app.listen(port, () => {
     logger.info(`Listen ${port}`)
   })
