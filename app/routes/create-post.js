@@ -14,14 +14,15 @@ const github = new Github({
   password: config.git_key_main,
   auth: "basic"
 })
-// Define repo and commit options
+// Define repo in which posts will be saved
 const repo = github.getRepo(owner, 'golos-academy')
+// This options will be used for commit message
 const options = {
 	author: {name: 'GolosBot', email: 'echo.from@yandex.ru'},
 	committer: {name: 'GolosBot', email: 'echo.from@yandex.ru'},
 	encode: true
 }
-// Promise wrapper for repository.write method from the github-api-node lib. Helps to avoid callback hell
+// Promise wrapper for repository.write method from the github-api-node lib. Used to make commits to the specified repository. Helps to avoid callback hell
 const writeOrUpdate = (repository, branch, link, file, text) => {
   return new Promise((resolve, reject)=> {
   	repository.write(branch,

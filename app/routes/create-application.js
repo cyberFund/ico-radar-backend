@@ -13,18 +13,7 @@ module.exports = (app, db) => {
       // If there is such document, sends an error responce
       if (searchRes !== null) {
         res.send('Application with this project_name already exists')
-        res.status(409)
-        /*
-        db.collection('projectsInWork').replaceOne({project_name: req.body.project_name}, req.body, (err, updated) => {
-          if (err) {
-            logger.error('An error occured while updating projectsInWork: \n', err)
-            return res.error('internal_error')
-          }
-          logger.info(`Application updated. Project: ${req.body.project_name}; time: ${new Date().toISOString()}`)
-          res.json({result: 'ok', message: 'application_updated'})
-          res.status(200)
-          res.end()
-        })*/
+        res.status(400)
       } else {
         // Otherwise, saves document in projectsInWork collection and sends ok responce to client
         db.collection('projectsInWork').save(req.body, (err, added) => {
@@ -32,9 +21,9 @@ module.exports = (app, db) => {
             logger.error('An error occured while adding in projectsInWork: \n', err)
             return res.error('internal_error')
           }
-          /* Doing some additional steps... */
+          // If operation ends successfuly, sends 200 response
           logger.info(`Added new application. Project: ${req.body.project_name}; time: ${new Date().toISOString()}`)
-          res.json({result: 'ok', message: 'application_created'})
+          res.send('application_created')
           res.status(200)
           res.end()
         })
