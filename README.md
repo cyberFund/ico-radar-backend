@@ -48,4 +48,5 @@ One of the main puproses of chaingear-backend is creating a well-defined workflo
 * After that application can be approved or rejected. 
   * In the first case one should make a request to the chaingear-backend `/approve-applications` API endpoint. After recieving a requset, chaingear-backend removes corresponding document from projectsInWork and saves it to the approvedProjects collection. Also, it sends this data to the Github API to save it in Chaingear repo
   * In the second case one should make a request to the chaingear-backend `/reject-applications` API endpoint. After recieving a request, chaingear-backend removes corresponding document from projectsInWork and saves it to the rejectedProjects collection
-Note that currently the second step is disabled; but all of this functionality will be added in next release
+  
+Note that currently the second step is disabled; but this functionality will be added in next release
