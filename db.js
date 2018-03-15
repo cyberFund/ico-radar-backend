@@ -10,7 +10,7 @@ const state = {
 const PROD_URI = config.DB_PROD_URI,
   TEST_URI = config.DB_TEST_URI
 
-// constants that specifies app mode: test or production
+// variables that specifies app mode: test or production
 exports.MODE_TEST = 'mode_test'
 exports.MODE_PROD = 'mode_prod'
 
@@ -28,7 +28,7 @@ exports.connect = (mode, done) => {
 // This method returns db connection object from local state.db variable
 exports.getDB = () => state.db
 
-// Remove all documents from all collections. Created only for testing, don't use it in production
+// Removes all documents from all collections. Created only for testing purposes, don't use it in production
 exports.drop = done => {
   if (!state.db) return done()
   state.db.collections((err, collections) => {
@@ -40,16 +40,3 @@ exports.drop = done => {
     }, done)
   })
 }
-/* exports.fixtures = (data, done) => {
-  const db = state.db
-  if (!db) {
-    return done(new Error('Missing db connection'))
-  }
-  const names = Object.keys(data.collections)
-  async.each(name, (name, cb) => {
-    db.createCollection(name, (err, collection) => {
-      if (err) return cb(err)
-      collection.insert(data.collections[name], cb)
-    })
-  }, done)
-} */
