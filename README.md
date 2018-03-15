@@ -34,3 +34,17 @@ chaingear-backend is written with Express.js and have following structure:
 
   * `post-generator`  - exports a class that contains methods for generating human-readable post from raw object with project description
 
+## Database structure
+Currently, chaingear-backend database has three collections:
+* projectsInWork - holds all applications that have not been reviewed yet
+* approvedProjects - mock collection that temporarily holds information about approved projects. This collection will be removed when a real storage will be developed
+* rejectedProjects - holds applications that was rejected
+
+## Applications workflow
+![](https://raw.githubusercontent.com/cyberFund/chaingear-backend/master/docs/api1.png)
+One of the main puproses of chaingear-backend is creating a well-defined workflow for processing of listing applications. Generally, this process has a following structure:
+1. User creates a new listing application through chaingear-form web interface. After clicking 'Commit changes' button this interface make a HTTP request to chaingear-backend `/create-application` API endpoint. If sent information satisfies requirements, chaingear-backend saves it in projectsInWork collection
+2. After that application can be approved or rejected. 
+  * In the first case one should make a request to the chaingear-backend `/approve-applications` API endpoint. After recieving a requset, chaingear-backend removes corresponding document from projectsInWork and saves it to the approvedProjects collection. Also, it sends this data to the Github API to save it in Chaingear repo
+  * In the second case one should make a request to the chaingear-backend `/reject-applications` API endpoint. After recieving a request, chaingear-backend removes corresponding document from projectsInWork and saves it to the rejectedProjects collection
+Note that currently the second step is disabled; but all of this functionality will be added in next release
