@@ -1,7 +1,11 @@
 # chaingear-backend
 Server app for Chaingear. Provides an API for solving Chaingear administration tasks such as creation of applications for ICO Radar listing, submiting or rejecting applications. 
 
+## Installation instructions
+[Docs](https://docs.google.com/document/d/1w2y4RhL1VWloq9S_0_2KS0EyocXRJH22XkIAaV7oMHI/edit?usp=sharing)
+
 ## App structure
+![architecture scheme](https://github.com/cyberFund/chaingear-backend/blob/master/docs/arch_scheme.png)
 chaingear-backend is written with Express.js and have following structure:
 * server.js - an entry point used to initialize the app. It defines third-party middlewares, used in app, connects to specified Mongo database, initislizes API enty points and listens to specified port for HTTP requests
 * Routes - a list of API entry points which can receive and handle HTTP GET or POST request. For now chaingear-backend API have following routes:
@@ -30,4 +34,3 @@ chaingear-backend is written with Express.js and have following structure:
 
   * `post-generator`  - exports a class that contains methods for generating human-readable post from raw object with project description
 
-You can also view [architecture scheme](https://github.com/cyberFund/chaingear-backend/blob/master/docs/arch_scheme.png) in docs/ directory
