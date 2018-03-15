@@ -42,6 +42,7 @@ Currently, chaingear-backend database has three collections:
 
 ## Applications workflow
 ![](https://raw.githubusercontent.com/cyberFund/chaingear-backend/master/docs/api1.png)
+
 One of the main puproses of chaingear-backend is creating a well-defined workflow for processing of listing applications. Generally, this process has a following structure:
 1. User creates a new listing application through chaingear-form web interface. After clicking 'Commit changes' button this interface make a HTTP request to chaingear-backend `/create-application` API endpoint. If sent information satisfies requirements, chaingear-backend saves it in projectsInWork collection
 2. After that application can be approved or rejected. 
