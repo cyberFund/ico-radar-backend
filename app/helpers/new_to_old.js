@@ -6,12 +6,12 @@ module.exports = (new_file) => {
     dependencies: [],
     icon: new_file.blockchain.logo,
     token: {
-      name: new_file.token.name,
-      symbol: new_file.token.symbol
+      name: new_file.token[0].name,
+      symbol: new_file.token[0].symbol
     },
     consensus: {
-      consensus_type: new_file.blockchain.dependency,
-      consensus_name: new_file.blockchain.dependency
+      consensus_type: new_file.blockchain.consensus_name,
+      consensus_name: new_file.blockchain.consensus_name
     },
     descriptions: {
       state: 'Project',
