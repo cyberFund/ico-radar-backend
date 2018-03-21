@@ -33,7 +33,16 @@ const updateFile = (repoObj, path, message, content, branch, sha) => {
     })
   })
 }
-
+const createPull = (repoObj, title, body) => {
+  return new Promise((resolve, reject) => {
+    repoObj.pr({
+      "title": title,
+      "body": body,
+      "head": `goloschaingear:${br}`,
+      "base": 'gh-pages'
+    }, (err, res) => err?reject(err):resolve(res))
+  })
+}
 module.exports = (req, res, next) => {
   // console.log(req.body.project_info)
   // req.body.project_info = JSON.parse(req.body.project_info)
@@ -56,7 +65,10 @@ module.exports = (req, res, next) => {
       const fileStr = JSON.stringify(chaingear, null, 4)
       return updateFile(forkRepo, 'chaingear.json', `Update chaingear.json: Add ${req.body.project_name}`, fileStr, br, blob.sha)
     }).then(updated => {
-      return logger.info(`chaingear.json was updated; time: ${new Date()}`)
+      logger.info(`chaingear.json was updated; time: ${new Date()}`)
+      return createPull(mainRepo, `Add: ${req.body.project_name}`, '')
+    }).then(pull => {
+      return logger.info(`Created a new pull request`)
     }).catch(err => console.log(err))
 
 }
