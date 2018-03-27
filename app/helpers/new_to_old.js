@@ -4,7 +4,7 @@ module.exports = (new_file) => {
     genesis_id: '',
     system: new_file.blockchain.project_name,
     dependencies: [],
-    icon: new_file.blockchain.project_name.toLowerCase().replace(/[\W]/g, '')
+    icon: new_file.blockchain.project_name.toLowerCase().replace(/[\W]/g, ''),
     token: {
       name: new_file.token[0].name,
       symbol: new_file.token[0].symbol
