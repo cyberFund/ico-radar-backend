@@ -16,7 +16,7 @@ app.use('/static', express.static('static'))
 // Midlleware that enable CORS
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*")
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
   next()
 })
 
@@ -38,27 +38,27 @@ app.use(flash())
 require('./config/passport')(passport)
 
 // JWT
-var jwt = require('jsonwebtoken')
-var passportJWT = require("passport-jwt");
+const jwt = require('jsonwebtoken')
+const passportJWT = require("passport-jwt");
 
-var ExtractJwt = passportJWT.ExtractJwt;
-var JwtStrategy = passportJWT.Strategy;
-var jwtOptions = {}
+const ExtractJwt = passportJWT.ExtractJwt;
+const JwtStrategy = passportJWT.Strategy;
+const jwtOptions = {}
 jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken()
 jwtOptions.secretOrKey = config.JWT_SECRET
 
-var strategy = new JwtStrategy(jwtOptions, function(jwt_payload, next) {
+const strategy = new JwtStrategy(jwtOptions, (jwt_payload, next) => {
   // usually this would be a database call:
-  var user = User.findOne({_id: jwt_payload.id}, (err, res) => {
+  const user = User.findOne({_id: jwt_payload.id}, (err, res) => {
     if (user) {
       next(null, user)
     } else {
       next(null, false)
     }
   })
-});
-
+})
 passport.use(strategy)
+
 // Constants that defines which port app will listen and which db (test of production) it will use
 const port = process.env.PORT || 8000
 const mode = process.env.NODE_ENV === 'test' ? 'mode_test' : 'mode_prod'
@@ -67,7 +67,7 @@ const mode = process.env.NODE_ENV === 'test' ? 'mode_test' : 'mode_prod'
 DB.connect(mode, (err) => {
   if (err) return logger.error(`Error while connecting to db: \n${err}`)
   // Initializes all routes and pass an Express instance and db object to this routes
-  require('./app/routes/index.js')(app, DB.getDB(), passport)
+  require('./app/routes/index.js')(app, DB.getDB())
   app.listen(port, () => {
     logger.info(`Listen ${port}`)
   })

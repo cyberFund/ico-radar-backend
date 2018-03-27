@@ -6,11 +6,11 @@ const login = require('./login')
 const twitter = require('./twitter')
 
 // Calls all currently used routes. This function is used in server.js to initialize routes
-module.exports = (app, db, passport) => {
+module.exports = (app, db) => {
   createApplication(app, db)
   getApplication(app, db)
   getAllApplications(app, db)
   approveApplication(app, db)
-  login(app, db, passport)
+  login(app, db)
   twitter(app, db)
 }
