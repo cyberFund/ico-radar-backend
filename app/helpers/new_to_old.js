@@ -4,7 +4,7 @@ module.exports = (new_file) => {
     genesis_id: '',
     system: new_file.blockchain.project_name,
     dependencies: [],
-    icon: new_file.blockchain.logo,
+    icon: new_file.blockchain.project_name.toLowerCase().replace(/[\W]/g, '')
     token: {
       name: new_file.token[0].name,
       symbol: new_file.token[0].symbol
@@ -19,9 +19,9 @@ module.exports = (new_file) => {
       headline: new_file.blockchain.headline
     },
     crowdsales: {
-      start_date: new_file.ico.phases[0].dates.start_date,
-      end_date: new_file.ico.phases[0].dates.end_date,
-      end_date_plan: new_file.ico.phases[0].dates.end_date,
+      start_date: new Date(new_file.ico.phases[0].dates.start_date).toISOString(),
+      end_date: new Date(new_file.ico.phases[0].dates.end_date).toISOString(),
+      end_date_plan: new Date(new_file.ico.phases[0].dates.end_date).toISOString(),
       genesis_address: [''],
       funding_term: new_file.ico.phases[0].terms.sales_agreement,
       funding_url: new_file.ico.phases[0].terms.sales_url,
