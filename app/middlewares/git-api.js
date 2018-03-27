@@ -44,16 +44,13 @@ const createPull = (repoObj, title, body) => {
   })
 }
 module.exports = (req, res, next) => {
-  // console.log(req.body.project_info)
-  // req.body.project_info = JSON.parse(req.body.project_info)
-
   const tomlFile = tomlify.toToml(req.body.project_info, {space: 2})
 
   const path = `sources/${req.body.project_name.replace(/[\W]/g, '')}/${req.body.project_name.replace(/[\W]/g, '')}.toml`
-  createFile(forkRepo, path, `Add: ${req.body.project_name}`, tomlFile, br)
+  createFile(mainRepo, path, `Add: ${req.body.project_name}`, tomlFile, br)
     .then(result => {
       logger.info(`File was committed: ${path}`)
-      return gitApi.getBlobSha('goloschaingear', repo, br, 'chaingear.json')
+      return gitApi.getBlobSha(owner, repo, br, 'chaingear.json')
     }).then(blob => {
       let chaingear = JSON.parse(Base64.decode(blob.content))
       const oldStructure = convert(req.body.project_info)
@@ -63,12 +60,10 @@ module.exports = (req, res, next) => {
       chaingear = _.uniqBy(chaingear, 'system')
       chaingear = _.sortBy(chaingear, ['system'])
       const fileStr = JSON.stringify(chaingear, null, 4)
-      return updateFile(forkRepo, 'chaingear.json', `Update chaingear.json: Add ${req.body.project_name}`, fileStr, br, blob.sha)
+      return updateFile(mainRepo, 'chaingear.json', `Update chaingear.json: Add ${req.body.project_name}`, fileStr, br, blob.sha)
     }).then(updated => {
       logger.info(`chaingear.json was updated; time: ${new Date()}`)
-      return createPull(mainRepo, `Add: ${req.body.project_name}`, '')
-    }).then(pull => {
-      return logger.info(`Created a new pull request`)
+      return next()
     }).catch(err => console.log(err))
 
 }
