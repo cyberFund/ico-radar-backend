@@ -4,6 +4,7 @@ const logger = require('../helpers/logger')
 module.exports = (app, db) => {
   // Define route
   app.post('/create-application', (req, res) => {
+    console.log(req.body)
     // Tries to find a document with projects_name which is equal to specified in request body
     db.collection('projectsInWork').findOne({'project_name': req.body.project_name}, (err, searchRes) => {
       if (err) {
