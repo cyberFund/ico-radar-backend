@@ -64,15 +64,47 @@ module.exports = (passport) => {
       callbackURL: config.CALLBACK_URL
     },
     (token, tokenSecret, profile, done) =>  {
-      /*User.findOrCreate(, (err, user) => {
-        if (err) { return done(err); }
-        done(null, user);
-      });*/
-      console.log(profile)
-      console.log(token)
-      console.log(tokenSecret)
+      User.findOne({'twitter.twitter_id': profile.id}, (err, user) => {
+        if (err) {
+          return done(err)
+        } else if (!user) {
+          const newUser = new User()
+          newUser.twitter.username = profile.username
+          newUser.twitter.displayName = profile.displayName,
+          newUser.twitter.twitter_id = profile.id
+          newUser.profileInfo = profile._raw
+          newUser.save(err => {
+            if (err) throw(err)
+            return done(null, newUser)
+          })
+        } else {
+          return done(null, user)
+        }
+      })
     }
-  ))/*
+  ))
+  // JWT
+  const jwt = require('jsonwebtoken')
+  const passportJWT = require("passport-jwt");
+
+  const ExtractJwt = passportJWT.ExtractJwt;
+  const JwtStrategy = passportJWT.Strategy;
+  const jwtOptions = {}
+  jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken()
+  jwtOptions.secretOrKey = config.JWT_SECRET
+
+  const strategy = new JwtStrategy(jwtOptions, (jwt_payload, next) => {
+    // usually this would be a database call:
+    const user = User.findOne({_id: jwt_payload.id}, (err, res) => {
+      if (user) {
+        next(null, user)
+      } else {
+        next(null, false)
+      }
+    })
+  })
+  passport.use(strategy)
+  /*
   passport.use(new TwitterTokenStrategy({
       consumerKey: config.TWITTER_CONSUMER_KEY,
       consumerSecret: config.TWITTER_CONSUMER_SECRET

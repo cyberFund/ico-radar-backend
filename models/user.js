@@ -5,6 +5,12 @@ const userSchema = mongoose.Schema({
   local: {
     username: String,
     password: String
+  },
+  twitter: {
+    username: String,
+    twitter_id: Number,
+    displayName: String,
+    profileInfo: String
   }
 })
 userSchema.methods.generateHash = password => {
