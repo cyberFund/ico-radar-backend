@@ -55,7 +55,11 @@ module.exports = (req, res, next) => {
       let chaingear = JSON.parse(Base64.decode(blob.content))
       const oldStructure = convert(req.body.project_info)
       const m = _.findIndex(chaingear, (o) => o.system === req.body.project_name)
-      chaingear.splice(m, 1, oldStructure)
+      if (m === -1) {
+        chaingear.splice(m, 1, oldStructure)
+      } else {
+        chaingear.push(oldStructure)
+      }
       chaingear = chaingear.filter(project => project.system!=='')
       chaingear = _.uniqBy(chaingear, 'system')
       chaingear = _.sortBy(chaingear, ['system'])
